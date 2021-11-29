@@ -18,8 +18,8 @@ public class LocalConfig {
 
     @Bean
     public void startDB(){
-        User u1 = new User(null, "Alef", "alef@gmail.com", 123);
-        User u2 = new User(null, "Pamela","pamela@gmail.com", 123 );
+        User u1 = new User(null, "Alef", "alef@gmail.com", "123");
+        User u2 = new User(null, "Pamela","pamela@gmail.com", "123" );
 
         repository.saveAll(List.of(u1,u2));
     }
