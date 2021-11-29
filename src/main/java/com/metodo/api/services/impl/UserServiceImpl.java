@@ -57,6 +57,4 @@ public class UserServiceImpl implements UserService {
             throw new DataIntegrityViolationException("Email exist in the system!");
         }
     }
-
-
 }
