@@ -17,6 +17,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
@@ -27,7 +28,7 @@ class UserServiceImplTest {
     public static final String  NAME     = "Alef";
     public static final String  EMAIL    = "alef@gmail.com";
     public static final String  PASSWORD = "123";
-    public static final String OBJETO_NÃO_ENCONTRADO_ID = "Objeto não encontrado, id: ";
+    public static final String OBJECT_NOT_FOUND = "Objeto não encontrado, id: ";
     public static final int INDEX = 0;
 
     @InjectMocks
@@ -65,17 +66,15 @@ class UserServiceImplTest {
 
     @Test
     void whenFindByIdThenReturnAnObjectNotFoundException(){
-        when(repository.findById(anyInt())).thenThrow(new ObjectNotFoundException(OBJETO_NÃO_ENCONTRADO_ID));
+        when(repository.findById(anyInt())).thenThrow(new ObjectNotFoundException(OBJECT_NOT_FOUND));
 
         try {
             service.findById(ID);
         } catch (Exception ex) {
             assertEquals(ObjectNotFoundException.class, ex.getClass());
-            assertEquals(OBJETO_NÃO_ENCONTRADO_ID,ex.getMessage());
+            assertEquals(OBJECT_NOT_FOUND,ex.getMessage());
         }
     }
-
-
 
     @Test
     void whenFindAllThenReturnAnListOfUsers() {
@@ -94,8 +93,19 @@ class UserServiceImplTest {
     }
 
     @Test
-    void create() {
+    void whenCreateThenReturnSuccess() {
+        when(repository.save(any())).thenReturn(user);
+
+        User response = service.create(userDTO);
+
+        assertNotNull(response);
+        assertEquals(User.class, response.getClass());
+        assertEquals(ID, response.getId());
+        assertEquals(NAME, response.getName());
+        assertEquals(EMAIL, response.getEmail());
+        assertEquals(PASSWORD, response.getPassword());
     }
+
 
     @Test
     void update() {
