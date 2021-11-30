@@ -24,17 +24,16 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 class UserResourceTest {
 
-    public static final Integer ID       = 1;
-    public static final String  NAME     = "Alef";
-    public static final String  EMAIL    = "alef@gmail.com";
-    public static final String  PASSWORD = "123";
+    public static final Integer ID = 1;
+    public static final String NAME = "Alef";
+    public static final String EMAIL = "alef@gmail.com";
+    public static final String PASSWORD = "123";
     public static final String OBJECT_NOT_FOUND = "Objeto não encontrado, id: ";
     public static final int INDEX = 0;
     public static final String EMAIL_EXIST_IN_THE_SYSTEM = "Email exist in the system!";
 
     private User user;
     private UserDTO userDTO;
-
 
     @InjectMocks
     private UserResource resource;
@@ -44,8 +43,6 @@ class UserResourceTest {
 
     @Mock
     private ModelMapper mapper;
-
-
 
     @BeforeEach
     void setUp() {
@@ -89,21 +86,18 @@ class UserResourceTest {
         assertEquals(ID, response.getBody().get(INDEX).getId());
         assertEquals(NAME, response.getBody().get(INDEX).getName());
         assertEquals(EMAIL, response.getBody().get(INDEX).getEmail());
-        assertEquals(PASSWORD,response.getBody().get(INDEX).getPassword());
-
-
-
-
-
-
-
-
-
-
+        assertEquals(PASSWORD, response.getBody().get(INDEX).getPassword());
     }
 
     @Test
-    void create() {
+    void whenCreateThenReturnCreated() {
+        when(service.create(any())).thenReturn(user);
+
+        ResponseEntity<UserDTO> response = resource.create(userDTO);
+
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getHeaders().get("Location"));
     }
 
     @Test
@@ -114,8 +108,9 @@ class UserResourceTest {
     void delete() {
     }
 
-    private void startUser(){
+
+    private void startUser() {
         user = new User(ID, NAME, EMAIL, PASSWORD);
-        userDTO = new UserDTO(ID,NAME,EMAIL,PASSWORD);
+        userDTO = new UserDTO(ID, NAME, EMAIL, PASSWORD);
     }
 }
