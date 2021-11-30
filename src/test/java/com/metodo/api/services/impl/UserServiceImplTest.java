@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +29,7 @@ class UserServiceImplTest {
     public static final String  PASSWORD = "123";
     public static final String OBJECT_NOT_FOUND = "Objeto não encontrado, id: ";
     public static final int INDEX = 0;
+    public static final String EMAIL_EXIST_IN_THE_SYSTEM = "Email exist in the system!";
 
     @InjectMocks
     private UserServiceImpl service;
@@ -43,7 +43,6 @@ class UserServiceImplTest {
     private User user;
     private UserDTO  userDTO;;
     private Optional<User> optionalUser;
-
 
     @BeforeEach
     void setUp() {
@@ -115,10 +114,9 @@ class UserServiceImplTest {
             service.create(userDTO);
         } catch (Exception ex) {
             assertEquals(DataIntegrityViolationException.class, ex.getClass());
-            assertEquals("Email exist in the system!", ex.getMessage());
+            assertEquals(EMAIL_EXIST_IN_THE_SYSTEM, ex.getMessage());
         }
     }
-
 
     @Test
     void whenUpdateThenReturnSuccess() {
@@ -133,6 +131,21 @@ class UserServiceImplTest {
         assertEquals(EMAIL, response.getEmail());
         assertEquals(PASSWORD, response.getPassword());
     }
+
+    @Test
+    void whenUpdateThenReturnAnDataIntegrityViolationException() {
+        when(repository.findByEmail(anyString())).thenReturn(optionalUser);
+
+        try {
+            optionalUser.get().setId(2);
+            service.create(userDTO);
+        } catch (Exception ex) {
+            assertEquals(DataIntegrityViolationException.class, ex.getClass());
+            assertEquals(EMAIL_EXIST_IN_THE_SYSTEM, ex.getMessage());
+        }
+    }
+
+
 
     @Test
     void delete() {
