@@ -33,8 +33,8 @@ class UserResourceTest {
     public static final int INDEX = 0;
     public static final String EMAIL_EXIST_IN_THE_SYSTEM = "Email exist in the system!";
 
-    private User user;
-    private UserDTO userDTO;
+    private User user = new User();
+    private UserDTO userDTO = new UserDTO();
 
     @InjectMocks
     private UserResource resource;
