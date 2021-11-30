@@ -1,5 +1,6 @@
 package com.metodo.api.resources.exceptions;
 
+import com.metodo.api.services.exceptions.DataIntegrityViolationException;
 import com.metodo.api.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class ResourceExceptionHandlerTest {
 
     public static final String OBJECT_NOT_FOUND = "Object not Found";
+    public static final String EMAIL_EXIST_IN_THE_SYSTEM = "Email exist in the system";
+
     @InjectMocks
     private ResourceExceptionHandler exceptionHandler;
 
@@ -29,7 +32,7 @@ class ResourceExceptionHandlerTest {
     void whenObjectNotFoundExceptionThenReturnResponseEntity() {
         ResponseEntity<StandardError> response = exceptionHandler
                 .objectNotFound(
-                        new ObjectNotFoundException("Object not Found"),
+                        new ObjectNotFoundException(OBJECT_NOT_FOUND),
                         new MockHttpServletRequest());
 
         assertNotNull(response);
@@ -42,5 +45,16 @@ class ResourceExceptionHandlerTest {
 
     @Test
     void dataIntegrityViolationException() {
+        ResponseEntity<StandardError> response = exceptionHandler
+                .dataIntegrityViolationException(
+                        new DataIntegrityViolationException(EMAIL_EXIST_IN_THE_SYSTEM),
+                        new MockHttpServletRequest());
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(StandardError.class, response.getBody().getClass());
+        assertEquals(EMAIL_EXIST_IN_THE_SYSTEM, response.getBody().getError());
+        assertEquals(400, response.getBody().getStatus());
     }
 }
